@@ -6,30 +6,30 @@ import * as Lambda from 'aws-lambda';
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
 export const withServerTimings = () => {
-    return {
-      // add Server-Timing header to response
-      after: (handler: middy.Request) => {
-        const response = handler.response as Lambda.APIGatewayProxyStructuredResultV2;
-        // get timings from request
+  return {
+    // add Server-Timing header to response
+    after: (handler: middy.Request) => {
+      const response = handler.response as Lambda.APIGatewayProxyStructuredResultV2;
+      // get timings from request
 
-        try {
-          const headers: unknown[] = [];
-          const timings = getServerTimingHeader(headers);
+      try {
+        const headers: unknown[] = [];
+        const timings = getServerTimingHeader(headers);
 
-          response.headers = {
-            ...response.headers,
-            'Server-Timing': timings,
-          };
-        } catch (e) {
-          Log.debug(`Error: Could not record server timings - ${e}`);
-        }
-      },
-    };
+        response.headers = {
+          ...response.headers,
+          'Server-Timing': timings,
+        };
+      } catch (e) {
+        Log.debug(`Error: Could not record server timings - ${e}`);
+      }
+    },
+  };
 };
 
 /**
- * @param name 
- * @param description 
+ * @param name
+ * @param description
  * Records the start time of a metric
  */
 export const startTime = (name: string, description?: string) => {
@@ -45,8 +45,8 @@ export const startTime = (name: string, description?: string) => {
 };
 
 /**
- * @param name 
- * @param description 
+ * @param name
+ * @param description
  * Records the duration of a metric and sets a metric timing
  */
 export const endTime = (name: string, description?: string) => {
@@ -61,7 +61,7 @@ export const endTime = (name: string, description?: string) => {
     }
     setMetric({
       name: obj.name as string,
-      description: obj.description as string ?? description,
+      description: (obj.description as string) ?? description,
       value: obj.value as [number, number],
     });
   } catch (e) {
@@ -90,7 +90,7 @@ const timerEnd = (name: string, description?: string) => {
     return console.warn(`No such name ${name}`);
   }
   const duration = process.hrtime(timeObj.startTime as [number, number]);
-  if(!timeObj.description) {
+  if (!timeObj.description) {
     timeObj.description = description;
   }
   const value = duration[0] * 1e3 + duration[1] * 1e-6;

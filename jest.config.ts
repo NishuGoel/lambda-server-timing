@@ -7,12 +7,11 @@ const config: Config.InitialOptions = {
   testPathIgnorePatterns: ['node_modules'],
   coveragePathIgnorePatterns: ['__tests__', 'node_modules'],
   reporters: ['default', ['jest-junit', { outputName: 'test-report.xml' }]],
-  setupFiles: ['./__tests__/test-setup.ts'],
   verbose: false,
   silent: true,
   forceExit: true,
   maxWorkers: 1, // run tests sequentially
-  moduleDirectories: ['node_modules', 'src'],
+  moduleDirectories: ['node_modules', '**/*'],
   modulePaths: ['node_modules'],
 };
 

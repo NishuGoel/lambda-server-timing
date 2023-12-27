@@ -1,6 +1,6 @@
 {
   "name": "lambda-server-timing",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "author": "Nishu Goel <nishu0505@gmail.com>",
   "contributors": [
@@ -34,7 +34,7 @@
     "build:declarations": "tsc -p tsconfig.json",
     "build:modules": "cross-env BABEL_ENV=bundled rollup -c rollup.config.js --bundleConfigAsCjs",
     "build": "npm-run-all -l clean -p build:modules build:declarations",
-    "test": "jest --verbose --detectOpenHandles --forceExit",
+    "test": "jest --verbose --detectOpenHandles --forceExit --passWithNoTests",
     "lint": "eslint --ext .ts"
   },
   "devDependencies": {
@@ -59,7 +59,14 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@epilot/eslint-config": "^2.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.16.0",
+    "eslint": "^8.56.0",
+    "eslint-config-standard-with-typescript": "^43.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.5.0",
+    "eslint-plugin-promise": "^6.1.1"
   },
   "dependencies": {
     "@dazn/lambda-powertools-logger": "^1.28.1",
