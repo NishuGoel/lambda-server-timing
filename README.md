@@ -4,6 +4,8 @@ Enables Lambdas to return responses with Server-Timing Header allowing to to pas
 
 Allows a server to communicate performance metrics about the request-response cycle to the user agent. It also standardizes a JavaScript interface to enable applications to collect, process, and act on these metrics to optimize application delivery.
 
+![banner](https://github.com/NishuGoel/lambda-server-timing/assets/26349046/0afba8b2-88fc-4f11-a648-ab1d943d4639)
+
 # Install
 
 ```
