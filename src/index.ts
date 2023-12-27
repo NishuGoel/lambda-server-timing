@@ -2,30 +2,39 @@ import Log from "@dazn/lambda-powertools-logger";
 import middy from "@middy/core";
 import * as Lambda from "aws-lambda";
 
+interface ServerTimingOptions {
+  enabled?: boolean;
+}
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
-export const withServerTimings = () => {
-  return {
-    // add Server-Timing header to response
-    after: (handler: middy.Request) => {
-      const response =
-        handler.response as Lambda.APIGatewayProxyStructuredResultV2;
-      // get timings from request
+export const withServerTimings = (opts?: ServerTimingOptions) => {
+  if (opts?.enabled) {
+    return {
+      // add Server-Timing header to response
+      after: (handler: middy.Request) => {
+        const response =
+          handler.response as Lambda.APIGatewayProxyStructuredResultV2;
+        // get timings from request
 
-      try {
-        const headers: unknown[] = [];
-        const timings = getServerTimingHeader(headers);
+        try {
+          const headers: unknown[] = [];
+          const timings = getServerTimingHeader(headers);
 
-        response.headers = {
-          ...response.headers,
-          "Server-Timing": timings,
-        };
-      } catch (e) {
-        Log.debug(`Error: Could not record server timings - ${e}`);
-      }
-    },
-  };
+          response.headers = {
+            ...response.headers,
+            "Server-Timing": timings,
+          };
+        } catch (e) {
+          Log.debug(`Error: Could not record server timings - ${e}`);
+        }
+      },
+    };
+  } else {
+    return {
+      after: () => {},
+    };
+  }
 };
 
 /**

@@ -8,22 +8,29 @@ const lambda_powertools_logger_1 = __importDefault(require("@dazn/lambda-powerto
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
-const withServerTimings = () => {
-    return {
-        // add Server-Timing header to response
-        after: (handler) => {
-            const response = handler.response;
-            // get timings from request
-            try {
-                const headers = [];
-                const timings = getServerTimingHeader(headers);
-                response.headers = Object.assign(Object.assign({}, response.headers), { "Server-Timing": timings });
-            }
-            catch (e) {
-                lambda_powertools_logger_1.default.debug(`Error: Could not record server timings - ${e}`);
-            }
-        },
-    };
+const withServerTimings = (opts) => {
+    if (opts === null || opts === void 0 ? void 0 : opts.enabled) {
+        return {
+            // add Server-Timing header to response
+            after: (handler) => {
+                const response = handler.response;
+                // get timings from request
+                try {
+                    const headers = [];
+                    const timings = getServerTimingHeader(headers);
+                    response.headers = Object.assign(Object.assign({}, response.headers), { "Server-Timing": timings });
+                }
+                catch (e) {
+                    lambda_powertools_logger_1.default.debug(`Error: Could not record server timings - ${e}`);
+                }
+            },
+        };
+    }
+    else {
+        return {
+            after: () => { },
+        };
+    }
 };
 exports.withServerTimings = withServerTimings;
 /**
