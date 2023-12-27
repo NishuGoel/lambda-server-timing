@@ -61,7 +61,7 @@ export const endTime = (name: string, description?: string) => {
     }
     setMetric({
       name: obj.name as string,
-      description: obj.description as string,
+      description: obj.description as string ?? description,
       value: obj.value as [number, number],
     });
   } catch (e) {
@@ -90,6 +90,9 @@ const timerEnd = (name: string, description?: string) => {
     return console.warn(`No such name ${name}`);
   }
   const duration = process.hrtime(timeObj.startTime as [number, number]);
+  if(!timeObj.description) {
+    timeObj.description = description;
+  }
   const value = duration[0] * 1e3 + duration[1] * 1e-6;
   timeObj.value = value;
   times.delete(name);

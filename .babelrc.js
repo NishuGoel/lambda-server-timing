@@ -5,7 +5,7 @@
  * format environments
  */
 const sharedPresets = ["@babel/preset-typescript"];
-const sharedIgnoredFiles = ["src/**/*.test.ts"];
+const sharedIgnoredFiles = ["*.test.ts"];
 const sharedConfig = {
   ignore: sharedIgnoredFiles,
   presets: sharedPresets,

@@ -20,4 +20,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
+  "include": ["*"],
+  "exclude": ["node_modules", "lib", "**/*.test.ts", "**/__tests__/*"]
 }
