@@ -1,30 +1,13 @@
+root: true
+parser: "@typescript-eslint/parser"
+plugins:
+  - "@typescript-eslint"
+  - prettier
 extends:
-  - "@epilot/eslint-config"
-ignorePatterns:
-  - node_modules
-  - dist
-  - lib
-env:
-  node: true
+  - eslint:recommended
+  - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+  - prettier
 rules:
-  "spaced-comment":
-    - error
-    - always
-    - line:
-        markers: ["/"]
-        exceptions: ["-", "+"]
-      block:
-        markers: ["!"]
-        exceptions: ["*"]
-        balanced: true
-  "prettier/prettier":
-    - error
-    - printWidth: 120 # https://hackernoon.com/does-column-width-of-80-make-sense-in-2018-50c161fbdcf6
-      trailingComma: all # better diffs, obviously
-      bracketSpacing: true # more space = pretty
-      semi: true # https://github.com/standard/semistandard
-      useTabs: false
-      tabWidth: 2
-      singleQuote: true
-      quoteProps: as-needed
-      proseWrap: never
+  no-console: 1
+  prettier/prettier: 2

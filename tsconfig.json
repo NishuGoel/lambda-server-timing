@@ -1,25 +1,16 @@
 {
   "compilerOptions": {
-    "outDir": "lib",
-    "target": "ES2019",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["es2019"],
-    "sourceMap": true,
-    "strict": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "skipLibCheck": true,
+    "target": "es2016",
+    "module": "commonjs",
     "declaration": true,
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": ".",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
   },
-  "include": ["**/*"],
-  "exclude": ["node_modules", "lib", "**/*.test.ts", "**/__tests__/*"]
+  "include": ["src/**/*"],
+  "exclude": []
 }
