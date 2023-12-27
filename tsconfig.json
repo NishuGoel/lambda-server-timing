@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "lib",
+    "target": "ES2019",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["es2019"],
+    "sourceMap": true,
+    "strict": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+}
