@@ -13,8 +13,13 @@ $ npm install lambda-server-timing
 ```
 
 # Usage
+
 ```
-$ withServerTimings()
+// within a lambda context
+withServerTimings({ enabled: true })
+
+// when you just want to capture the Server-Timing header value for your own usage purpose
+getServerTimings()
 ```
 
 This will attach a Server-Timing header to your response headers with the timings recorded for requests.
