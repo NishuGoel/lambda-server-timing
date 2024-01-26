@@ -2,12 +2,11 @@ import Log from "@dazn/lambda-powertools-logger";
 import * as Lambda from "aws-lambda";
 import middy from "@middy/core";
 import { getServerTimings } from "./timers";
-
-interface ServerTimingOptions {
-  enabled?: boolean;
-}
+import type { ServerTimingOptions } from "./types";
 
 /**
+ * Server-Timing middleware
+ *
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
 export const withServerTimings = (opts?: ServerTimingOptions) => {

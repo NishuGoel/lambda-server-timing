@@ -1,19 +1,6 @@
-import Log from "@dazn/lambda-powertools-logger";
+import type { TimeObject, Tuple } from "./types";
 
-type Tuple = [number, number];
-
-declare global {
-  interface process {
-    hrtime: (time?: Tuple) => Tuple;
-  }
-}
-
-interface TimeObject {
-  name: string;
-  description: string;
-  value: Tuple;
-}
-
+/* eslint-disable no-console */
 const times = new Map<string, Record<string, unknown>>();
 
 const timer = (name: string, description?: string) => {
@@ -32,12 +19,13 @@ const timer = (name: string, description?: string) => {
 export const startTime = (name: string, description?: string) => {
   try {
     if (typeof name !== "string") {
-      return Log.debug("Metric name is not string");
+      console.warn("Metric name is not string");
+      return;
     }
 
     timer(name, description);
   } catch (e) {
-    Log.debug(`Error: Could not record start time ${name} - ${e}`);
+    console.warn(`Error: Could not record start time ${name} - ${e}`);
   }
 };
 
@@ -49,7 +37,8 @@ export const startTime = (name: string, description?: string) => {
 export const endTime = (name: string, description?: string) => {
   try {
     if (typeof name !== "string") {
-      return Log.debug("Metric name is not string");
+      console.warn("Metric name is not string");
+      return;
     }
 
     const obj = timerEnd(name);
@@ -62,14 +51,15 @@ export const endTime = (name: string, description?: string) => {
       value: obj.value as Tuple,
     });
   } catch (e) {
-    Log.debug(`Error: Could not record end time for ${name} - ${e}`);
+    console.warn(`Error: Could not record end time for ${name} - ${e}`);
   }
 };
 
 const timerEnd = (name: string, description?: string) => {
   const timeObj = times.get(name);
   if (!timeObj) {
-    return Log.debug(`No such name ${name}`);
+    console.warn(`No such name ${name}`);
+    return;
   }
   const duration = process.hrtime(timeObj.startTime as Tuple);
   if (!timeObj.description) {
