@@ -5,7 +5,7 @@
     "declaration": true,
     "sourceMap": true,
     "rootDir": "src",
-    "outDir": ".",
+    "outDir": "lib/cjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
