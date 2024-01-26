@@ -14,7 +14,7 @@ $ npm install lambda-server-timing
 
 # Usage
 
-```
+```js
 // within a lambda context
 withServerTimings({ enabled: true })
 
@@ -25,6 +25,7 @@ getServerTimings()
 This will attach a Server-Timing header to your response headers with the timings recorded for requests.
 
 The header looks like:
+
 ```
 HTTP/1.1 200 OK
 
@@ -36,16 +37,18 @@ The visual example of it looks like:
 
 ![Visual Server-Timing header](https://github.com/NishuGoel/svelte-i18next/assets/26349046/5009ec62-7fe8-429d-8a5b-f338ad28225e)
 
-This now enables developers to look throught the performance problems of their apps for not just the frontend and but also the backend. 
+This now enables developers to look throught the performance problems of their apps for not just the frontend and but also the backend.
 
 The package also exposes the timer methods `startTime` and `endTime` so you can measure your methods on a regular basis and improve accordingly.
 
-
 # Usage - startTime/endTime
-```
-$ startTime('abbr', "getAbbreviatedResponse");
-$ getAbbreviatedResponse({
-        ...
-   });
-$ endTime('abbr', "getAbbreviatedResponse");
+
+```js
+startTime('abbr', "getAbbreviatedResponse");
+
+getAbbreviatedResponse({
+   ...
+});
+
+endTime('abbr');
 ```
