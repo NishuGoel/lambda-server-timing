@@ -82,7 +82,7 @@ export const endTime = (name: string, description?: string) => {
 // measure time
 interface TimeObject {
   name: string;
-  description: string;
+  description?: string;
   value: [number, number];
 }
 const times = new Map<string, Record<string, unknown>>();
@@ -112,7 +112,7 @@ const timerEnd = (name: string, description?: string) => {
 
 let tempHeaders: unknown[] = [];
 
-const setMetric = ({ name, value, description }: TimeObject) => {
+export const setMetric = ({ name, value, description }: TimeObject) => {
   if (typeof name !== "string") {
     return Log.debug("1st argument name is not string");
   }

@@ -20,4 +20,10 @@ export declare const startTime: (name: string, description?: string) => void;
  * Records the duration of a metric and sets a metric timing
  */
 export declare const endTime: (name: string, description?: string) => void;
+interface TimeObject {
+    name: string;
+    description?: string;
+    value: [number, number];
+}
+export declare const setMetric: ({ name, value, description }: TimeObject) => void;
 export {};

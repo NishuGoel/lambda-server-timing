@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.endTime = exports.startTime = exports.withServerTimings = void 0;
+exports.setMetric = exports.endTime = exports.startTime = exports.withServerTimings = void 0;
 const lambda_powertools_logger_1 = __importDefault(require("@dazn/lambda-powertools-logger"));
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
@@ -65,7 +65,7 @@ const endTime = (name, description) => {
         if (!obj) {
             return;
         }
-        setMetric({
+        (0, exports.setMetric)({
             name: obj.name,
             description: (_a = obj.description) !== null && _a !== void 0 ? _a : description,
             value: obj.value,
@@ -112,6 +112,7 @@ const setMetric = ({ name, value, description }) => {
         : `${name}; dur=${dur}; desc="${description}"`;
     tempHeaders.push(metric);
 };
+exports.setMetric = setMetric;
 const getServerTimingHeader = (headers) => {
     headers.push(tempHeaders === null || tempHeaders === void 0 ? void 0 : tempHeaders.toString());
     tempHeaders = [];
