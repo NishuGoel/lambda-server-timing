@@ -51,7 +51,6 @@
   },
   "dependencies": {
     "@dazn/lambda-powertools-logger": "^1.28.1",
-    "@middy/core": "^5.1.0",
-    "aws-lambda": "^1.0.7"
+    "@middy/core": "^5.1.0"
   }
 }
