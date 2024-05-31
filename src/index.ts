@@ -1,6 +1,6 @@
 import Log from "@dazn/lambda-powertools-logger";
 import middy from "@middy/core";
-import * as Lambda from "aws-lambda";
+import type * as Lambda from "aws-lambda";
 
 interface ServerTimingOptions {
   enabled?: boolean;
