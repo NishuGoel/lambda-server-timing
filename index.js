@@ -53,6 +53,8 @@ exports.startTime = startTime;
 /**
  * @param name
  * @param description
+ *
+ * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
 const endTime = (name, description) => {
@@ -70,6 +72,7 @@ const endTime = (name, description) => {
             description: (_a = obj.description) !== null && _a !== void 0 ? _a : description,
             value: obj.value,
         });
+        return obj;
     }
     catch (e) {
         lambda_powertools_logger_1.default.debug(`Error: Could not record end time for ${name} - ${e}`);

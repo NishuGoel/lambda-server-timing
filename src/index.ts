@@ -57,6 +57,8 @@ export const startTime = (name: string, description?: string) => {
 /**
  * @param name
  * @param description
+ *
+ * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
 export const endTime = (name: string, description?: string) => {
@@ -74,12 +76,13 @@ export const endTime = (name: string, description?: string) => {
       description: (obj.description as string) ?? description,
       value: obj.value as [number, number],
     });
+
+    return obj;
   } catch (e) {
     Log.debug(`Error: Could not record end time for ${name} - ${e}`);
   }
 };
 
-// measure time
 interface TimeObject {
   name: string;
   description?: string;

@@ -17,9 +17,11 @@ export declare const startTime: (name: string, description?: string) => void;
 /**
  * @param name
  * @param description
+ *
+ * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
-export declare const endTime: (name: string, description?: string) => void;
+export declare const endTime: (name: string, description?: string) => void | Record<string, unknown>;
 interface TimeObject {
     name: string;
     description?: string;
