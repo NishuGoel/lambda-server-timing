@@ -44,3 +44,29 @@ $ getAbbreviatedResponse({
    });
 $ endTime('abbr', "getAbbreviatedResponse");
 ```
+
+# Usage - trackTime (async helper)
+
+`trackTime` wraps any sync or async function, automatically recording its duration as a Server-Timing metric. It returns the function's result directly.
+
+```typescript
+import { trackTime } from 'lambda-server-timing';
+
+// Time an async database query
+const user = await trackTime('db-query', async () => {
+  return await dynamodb.get({ TableName: 'users', Key: { id } }).promise();
+}, 'Fetch user from DynamoDB');
+
+// Time an external API call
+const data = await trackTime('external-api', async () => {
+  const res = await fetch('https://api.example.com/data');
+  return res.json();
+});
+
+// Also works with sync functions
+const result = trackTime('compute', () => {
+  return heavyComputation(input);
+}, 'Heavy computation');
+```
+
+If the wrapped function throws an error, `trackTime` still records the timing before re-throwing, so you get visibility into failed operations too.

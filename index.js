@@ -1,9 +1,18 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMetric = exports.endTime = exports.startTime = exports.withServerTimings = void 0;
+exports.setMetric = exports.endTime = exports.trackTime = exports.startTime = exports.withServerTimings = void 0;
 const lambda_powertools_logger_1 = __importDefault(require("@dazn/lambda-powertools-logger"));
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
@@ -57,6 +66,25 @@ exports.startTime = startTime;
  * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
+/**
+ * @param name - Unique identifier for the metric
+ * @param fn - Async function to time
+ * @param description - Optional human-readable description
+ *
+ * @returns The return value of the provided function
+ * Wraps an async function, automatically recording its duration as a metric
+ */
+const trackTime = (name, fn, description) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, exports.startTime)(name, description);
+    try {
+        const result = yield fn();
+        return result;
+    }
+    finally {
+        (0, exports.endTime)(name, description);
+    }
+});
+exports.trackTime = trackTime;
 const endTime = (name, description) => {
     var _a;
     try {
