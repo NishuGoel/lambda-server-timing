@@ -21,6 +21,15 @@ export declare const startTime: (name: string, description?: string) => void;
  * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
+/**
+ * @param name - Unique identifier for the metric
+ * @param fn - Async function to time
+ * @param description - Optional human-readable description
+ *
+ * @returns The return value of the provided function
+ * Wraps an async function, automatically recording its duration as a metric
+ */
+export declare const trackTime: <T>(name: string, fn: () => T | Promise<T>, description?: string) => Promise<T>;
 export declare const endTime: (name: string, description?: string) => void | Record<string, unknown>;
 interface TimeObject {
     name: string;

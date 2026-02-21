@@ -61,6 +61,28 @@ export const startTime = (name: string, description?: string) => {
  * @returns TimeObject
  * Records the duration of a metric and sets a metric timing
  */
+/**
+ * @param name - Unique identifier for the metric
+ * @param fn - Async function to time
+ * @param description - Optional human-readable description
+ *
+ * @returns The return value of the provided function
+ * Wraps an async function, automatically recording its duration as a metric
+ */
+export const trackTime = async <T>(
+  name: string,
+  fn: () => T | Promise<T>,
+  description?: string
+): Promise<T> => {
+  startTime(name, description);
+  try {
+    const result = await fn();
+    return result;
+  } finally {
+    endTime(name, description);
+  }
+};
+
 export const endTime = (name: string, description?: string) => {
   try {
     if (typeof name !== "string") {
