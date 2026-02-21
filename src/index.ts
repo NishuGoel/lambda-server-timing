@@ -72,7 +72,7 @@ export const startTime = (name: string, description?: string) => {
 export const trackTime = async <T>(
   name: string,
   fn: () => T | Promise<T>,
-  description?: string,
+  description?: string
 ): Promise<T> => {
   startTime(name, description);
   try {

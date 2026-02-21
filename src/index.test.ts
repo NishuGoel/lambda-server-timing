@@ -1,4 +1,10 @@
-import { startTime, endTime, setMetric, trackTime, withServerTimings } from "./index";
+import {
+  startTime,
+  endTime,
+  setMetric,
+  trackTime,
+  withServerTimings,
+} from "./index";
 
 // Helper to wait a known duration
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,7 +19,9 @@ describe("startTime / endTime", () => {
     expect(result).toHaveProperty("name", "db-query");
     expect(result).toHaveProperty("description", "Database Query");
     expect(typeof (result as Record<string, unknown>).value).toBe("number");
-    expect((result as Record<string, unknown>).value).toBeGreaterThanOrEqual(40);
+    expect((result as Record<string, unknown>).value).toBeGreaterThanOrEqual(
+      40
+    );
   });
 
   it("should return undefined for unknown metric names", () => {
@@ -34,7 +42,11 @@ describe("startTime / endTime", () => {
 describe("setMetric", () => {
   it("should accept a valid metric", () => {
     expect(() =>
-      setMetric({ name: "cache", value: [0, 0] as unknown as [number, number], description: "Cache hit" }),
+      setMetric({
+        name: "cache",
+        value: [0, 0] as unknown as [number, number],
+        description: "Cache hit",
+      })
     ).not.toThrow();
   });
 });
@@ -60,7 +72,7 @@ describe("trackTime", () => {
         await sleep(10);
         return 123;
       },
-      "A described operation",
+      "A described operation"
     );
     expect(result).toBe(123);
   });
@@ -69,7 +81,7 @@ describe("trackTime", () => {
     await expect(
       trackTime("failing-op", async () => {
         throw new Error("something broke");
-      }),
+      })
     ).rejects.toThrow("something broke");
   });
 
@@ -122,7 +134,10 @@ describe("withServerTimings", () => {
     const middleware = withServerTimings({ enabled: true });
 
     // Set a metric first
-    setMetric({ name: "test-metric", value: [0, 42] as unknown as [number, number] });
+    setMetric({
+      name: "test-metric",
+      value: [0, 42] as unknown as [number, number],
+    });
 
     const handler = {
       response: {
