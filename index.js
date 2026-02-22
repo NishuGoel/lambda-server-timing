@@ -12,14 +12,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMetric = exports.endTime = exports.trackTime = exports.startTime = exports.withServerTimings = void 0;
+exports.setMetric = exports.endTime = exports.trackTime = exports.startTime = exports.withServerTimings = exports._resetColdStartState = exports.getColdStartDuration = exports.isColdStart = void 0;
 const lambda_powertools_logger_1 = __importDefault(require("@dazn/lambda-powertools-logger"));
+// Cold start detection - module-level state persists across warm invocations
+const moduleLoadTime = process.hrtime();
+let isWarm = false;
+let coldStartDuration = null;
+/**
+ * @returns true if this is a cold start (first invocation in this Lambda container)
+ */
+const isColdStart = () => !isWarm;
+exports.isColdStart = isColdStart;
+/**
+ * @returns the cold start duration in milliseconds, or null if not a cold start
+ */
+const getColdStartDuration = () => coldStartDuration;
+exports.getColdStartDuration = getColdStartDuration;
+/**
+ * Resets cold start state and clears pending metrics. Useful for testing only.
+ * @internal
+ */
+const _resetColdStartState = () => {
+    isWarm = false;
+    coldStartDuration = null;
+    tempHeaders = [];
+};
+exports._resetColdStartState = _resetColdStartState;
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
 const withServerTimings = (opts) => {
+    const trackColdStart = (opts === null || opts === void 0 ? void 0 : opts.trackColdStart) !== false;
     if (opts === null || opts === void 0 ? void 0 : opts.enabled) {
         return {
+            // detect cold start at the beginning of request
+            before: () => {
+                if (trackColdStart && !isWarm) {
+                    const initDuration = process.hrtime(moduleLoadTime);
+                    coldStartDuration = initDuration[0] * 1e3 + initDuration[1] * 1e-6;
+                    (0, exports.setMetric)({
+                        name: "cold-start",
+                        value: coldStartDuration,
+                        description: "Lambda Cold Start",
+                    });
+                    isWarm = true;
+                }
+                else if (!isWarm) {
+                    // Mark as warm even if not tracking
+                    isWarm = true;
+                }
+            },
             // add Server-Timing header to response
             after: (handler) => {
                 const response = handler.response;
@@ -37,6 +79,13 @@ const withServerTimings = (opts) => {
     }
     else {
         return {
+            before: () => {
+                if (!isWarm) {
+                    const initDuration = process.hrtime(moduleLoadTime);
+                    coldStartDuration = initDuration[0] * 1e3 + initDuration[1] * 1e-6;
+                    isWarm = true;
+                }
+            },
             after: () => { },
         };
     }

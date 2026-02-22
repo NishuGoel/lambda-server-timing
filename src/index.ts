@@ -2,15 +2,60 @@ import Log from "@dazn/lambda-powertools-logger";
 import middy from "@middy/core";
 import type * as Lambda from "aws-lambda";
 
+// Cold start detection - module-level state persists across warm invocations
+const moduleLoadTime = process.hrtime();
+let isWarm = false;
+let coldStartDuration: number | null = null;
+
+/**
+ * @returns true if this is a cold start (first invocation in this Lambda container)
+ */
+export const isColdStart = (): boolean => !isWarm;
+
+/**
+ * @returns the cold start duration in milliseconds, or null if not a cold start
+ */
+export const getColdStartDuration = (): number | null => coldStartDuration;
+
+/**
+ * Resets cold start state and clears pending metrics. Useful for testing only.
+ * @internal
+ */
+export const _resetColdStartState = (): void => {
+  isWarm = false;
+  coldStartDuration = null;
+  tempHeaders = [];
+};
+
 interface ServerTimingOptions {
   enabled?: boolean;
+  /** Include cold start timing in Server-Timing header (default: true) */
+  trackColdStart?: boolean;
 }
 /**
  * @returns a lambda middleware that adds a Server-Timing header to the response
  */
 export const withServerTimings = (opts?: ServerTimingOptions) => {
+  const trackColdStart = opts?.trackColdStart !== false;
+
   if (opts?.enabled) {
     return {
+      // detect cold start at the beginning of request
+      before: () => {
+        if (trackColdStart && !isWarm) {
+          const initDuration = process.hrtime(moduleLoadTime);
+          coldStartDuration = initDuration[0] * 1e3 + initDuration[1] * 1e-6;
+          setMetric({
+            name: "cold-start",
+            value: coldStartDuration as unknown as [number, number],
+            description: "Lambda Cold Start",
+          });
+          isWarm = true;
+        } else if (!isWarm) {
+          // Mark as warm even if not tracking
+          isWarm = true;
+        }
+      },
       // add Server-Timing header to response
       after: (handler: middy.Request) => {
         const response =
@@ -32,6 +77,13 @@ export const withServerTimings = (opts?: ServerTimingOptions) => {
     };
   } else {
     return {
+      before: () => {
+        if (!isWarm) {
+          const initDuration = process.hrtime(moduleLoadTime);
+          coldStartDuration = initDuration[0] * 1e3 + initDuration[1] * 1e-6;
+          isWarm = true;
+        }
+      },
       after: () => {},
     };
   }

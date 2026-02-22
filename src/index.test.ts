@@ -4,6 +4,9 @@ import {
   setMetric,
   trackTime,
   withServerTimings,
+  isColdStart,
+  getColdStartDuration,
+  _resetColdStartState,
 } from "./index";
 
 // Helper to wait a known duration
@@ -110,10 +113,102 @@ describe("trackTime", () => {
   });
 });
 
-describe("withServerTimings", () => {
-  it("should return a middleware with an after hook", () => {
+describe("Cold Start Detection", () => {
+  beforeEach(() => {
+    _resetColdStartState();
+  });
+
+  it("should detect cold start on first invocation", () => {
+    expect(isColdStart()).toBe(true);
+    expect(getColdStartDuration()).toBeNull();
+  });
+
+  it("should mark as warm after middleware before hook runs", () => {
     const middleware = withServerTimings({ enabled: true });
+    expect(isColdStart()).toBe(true);
+
+    middleware.before();
+
+    expect(isColdStart()).toBe(false);
+    expect(getColdStartDuration()).toBeGreaterThanOrEqual(0);
+  });
+
+  it("should not report cold start on subsequent invocations", () => {
+    const middleware = withServerTimings({ enabled: true });
+
+    // First invocation - cold start
+    middleware.before();
+    expect(isColdStart()).toBe(false);
+    const firstDuration = getColdStartDuration();
+
+    // Second invocation - warm
+    middleware.before();
+    expect(isColdStart()).toBe(false);
+    // Duration should remain from first cold start
+    expect(getColdStartDuration()).toBe(firstDuration);
+  });
+
+  it("should add cold-start metric to Server-Timing header when enabled", () => {
+    const middleware = withServerTimings({ enabled: true });
+    middleware.before();
+
+    const handler = {
+      response: {
+        statusCode: 200,
+        headers: {},
+      },
+    };
+
+    middleware.after(handler as never);
+
+    expect(handler.response.headers).toHaveProperty("Server-Timing");
+    expect(
+      (handler.response.headers as Record<string, string>)["Server-Timing"]
+    ).toContain("cold-start");
+  });
+
+  it("should not add cold-start metric when trackColdStart is false", () => {
+    const middleware = withServerTimings({
+      enabled: true,
+      trackColdStart: false,
+    });
+    middleware.before();
+
+    const handler = {
+      response: {
+        statusCode: 200,
+        headers: {},
+      },
+    };
+
+    middleware.after(handler as never);
+
+    expect(
+      (handler.response.headers as Record<string, string>)["Server-Timing"]
+    ).not.toContain("cold-start");
+  });
+
+  it("should track cold start even when middleware is disabled", () => {
+    const middleware = withServerTimings({ enabled: false });
+    expect(isColdStart()).toBe(true);
+
+    middleware.before();
+
+    expect(isColdStart()).toBe(false);
+    expect(getColdStartDuration()).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("withServerTimings", () => {
+  beforeEach(() => {
+    _resetColdStartState();
+  });
+
+  it("should return a middleware with before and after hooks", () => {
+    const middleware = withServerTimings({ enabled: true });
+    expect(middleware).toHaveProperty("before");
     expect(middleware).toHaveProperty("after");
+    expect(typeof middleware.before).toBe("function");
     expect(typeof middleware.after).toBe("function");
   });
 
